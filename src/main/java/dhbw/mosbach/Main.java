@@ -54,7 +54,7 @@ public class Main {
         chargingStation.connect(twoPin);
         chargingStation.connect(fourPin);
 
-        // Battery
+        // Composite - Pattern
         Battery battery = new Battery();
         boolean status = battery.takeEnergy(1);
         System.out.println(status);
