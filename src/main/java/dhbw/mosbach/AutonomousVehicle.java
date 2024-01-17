@@ -8,6 +8,7 @@ import dhbw.mosbach.parts.camera.ICamera;
 import dhbw.mosbach.parts.chassis.IChassis;
 import dhbw.mosbach.parts.door.Door;
 import dhbw.mosbach.parts.electricalengine.AEngine;
+import dhbw.mosbach.parts.electricalengine.EngineController;
 import dhbw.mosbach.parts.gps.AGPS;
 import dhbw.mosbach.parts.headlight.AHeadLight;
 import dhbw.mosbach.parts.lidar.ALidar;
@@ -17,7 +18,7 @@ import dhbw.mosbach.parts.wheel.IWheel;
 public class AutonomousVehicle {
 
     private IChassis chassis;
-    private AEngine engine;
+    private EngineController engine;
     private Battery battery;
     private AHeadLight[] headLights;
     private ABrakeLight[] brakeLight;
@@ -125,7 +126,7 @@ public class AutonomousVehicle {
     public static class Builder {
         private CentralUnit centralUnit = new CentralUnit();
         private IChassis chassis;
-        private AEngine engine;
+        private EngineController engine;
         private Battery battery;
         private AHeadLight[] headLights;
         private ABrakeLight[] brakeLight;
@@ -142,7 +143,7 @@ public class AutonomousVehicle {
             return this;
         }
 
-        public Builder setEngine(AEngine engine) {
+        public Builder setEngine(EngineController engine) {
             this.engine = engine;
             subscribe(engine);
             return this;

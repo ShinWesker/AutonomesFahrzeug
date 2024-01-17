@@ -1,5 +1,9 @@
 package dhbw.mosbach;
 
+import dhbw.mosbach.adapter.ChargingStation;
+import dhbw.mosbach.adapter.FourPolAdapter;
+import dhbw.mosbach.adapter.IConnectorPlug;
+import dhbw.mosbach.adapter.TwoPolConnector;
 import dhbw.mosbach.parts.battery.Battery;
 import dhbw.mosbach.parts.brake.ABrake;
 import dhbw.mosbach.parts.brake.Brake;
@@ -9,6 +13,7 @@ import dhbw.mosbach.parts.camera.CameraV1;
 import dhbw.mosbach.parts.chassis.Chassis;
 import dhbw.mosbach.parts.door.Door;
 import dhbw.mosbach.parts.electricalengine.AEngine;
+import dhbw.mosbach.parts.electricalengine.EngineController;
 import dhbw.mosbach.parts.electricalengine.EngineX;
 import dhbw.mosbach.parts.gps.AGPS;
 import dhbw.mosbach.parts.gps.GPS;
@@ -27,7 +32,7 @@ public class Main {
 
         AutonomousVehicle vehicle = new AutonomousVehicle.Builder()
                 .setChassis(new Chassis())
-                .setEngine(new EngineX())
+                .setEngine(new EngineController(new EngineX()))
                 .setBattery(new Battery())
                 .setHeadLights(new HeadLight[]{new HeadLight(), new HeadLight(), new HeadLight(), new HeadLight()})
                 .setBrakeLight(new BrakeLight[]{new BrakeLight(), new BrakeLight(), new BrakeLight(), new BrakeLight()})
@@ -47,5 +52,14 @@ public class Main {
         vehicle.stop();
         vehicle.emergencyStop();
         vehicle.shutdown();
+
+
+        // Adapter - Pattern
+        IConnectorPlug twoPin = new TwoPolConnector();
+        IConnectorPlug fourPin = new FourPolAdapter();
+
+        ChargingStation chargingStation = new ChargingStation();
+        chargingStation.connect(twoPin);
+        chargingStation.connect(fourPin);
     }
 }
