@@ -1,4 +1,17 @@
 package dhbw.mosbach.parts.lidar;
 
-public class LidarXT implements ILidar {
+import dhbw.mosbach.events.lidar.EventLidarOff;
+import dhbw.mosbach.events.lidar.EventLidarOn;
+
+public class LidarXT extends ALidar {
+    @Override
+    public void receive(EventLidarOn eventLidarOn) {
+        isOn = true;
+        System.out.println("Lidar on!");
+    }
+    @Override
+    public void receive(EventLidarOff eventLidarOff) {
+        isOn = false;
+        System.out.println("Lidar off!");
+    }
 }
