@@ -5,25 +5,17 @@ import dhbw.mosbach.adapter.FourPolAdapter;
 import dhbw.mosbach.adapter.IConnectorPlug;
 import dhbw.mosbach.adapter.TwoPolConnector;
 import dhbw.mosbach.parts.battery.Battery;
-import dhbw.mosbach.parts.brake.ABrake;
 import dhbw.mosbach.parts.brake.Brake;
-import dhbw.mosbach.parts.brakelight.ABrakeLight;
 import dhbw.mosbach.parts.brakelight.BrakeLight;
 import dhbw.mosbach.parts.camera.CameraV1;
 import dhbw.mosbach.parts.chassis.Chassis;
 import dhbw.mosbach.parts.door.Door;
-import dhbw.mosbach.parts.electricalengine.AEngine;
 import dhbw.mosbach.parts.electricalengine.EngineController;
 import dhbw.mosbach.parts.electricalengine.EngineX;
-import dhbw.mosbach.parts.gps.AGPS;
 import dhbw.mosbach.parts.gps.GPS;
-import dhbw.mosbach.parts.headlight.AHeadLight;
 import dhbw.mosbach.parts.headlight.HeadLight;
-import dhbw.mosbach.parts.lidar.ALidar;
 import dhbw.mosbach.parts.lidar.LidarNG;
 import dhbw.mosbach.parts.seatbench.SeatBench;
-import dhbw.mosbach.parts.turnsignal.ATurnSignal;
-import dhbw.mosbach.parts.turnsignal.TurnSignal;
 import dhbw.mosbach.parts.wheel.Wheel;
 
 public class Main {
@@ -61,5 +53,16 @@ public class Main {
         ChargingStation chargingStation = new ChargingStation();
         chargingStation.connect(twoPin);
         chargingStation.connect(fourPin);
+
+        // Battery
+        Battery battery = new Battery();
+        boolean status = battery.takeEnergy(1);
+        System.out.println(status);
+        battery.charge();
+
+        status = battery.takeEnergy(1);
+        System.out.println(status);
+
+
     }
 }
