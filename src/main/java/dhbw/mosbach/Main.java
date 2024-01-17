@@ -6,6 +6,7 @@ import dhbw.mosbach.parts.brakelight.ABrakeLight;
 import dhbw.mosbach.parts.brakelight.BrakeLight;
 import dhbw.mosbach.parts.camera.CameraV1;
 import dhbw.mosbach.parts.camera.ICamera;
+import dhbw.mosbach.parts.door.Door;
 import dhbw.mosbach.parts.electricalengine.AEngine;
 import dhbw.mosbach.parts.electricalengine.EngineX;
 import dhbw.mosbach.parts.gps.AGPS;
@@ -57,5 +58,14 @@ public class Main {
         autonomousVehicle.stop();
         autonomousVehicle.emergencyStop();
         autonomousVehicle.shutdown();
+
+        // State - Pattern door:
+
+        Door door = new Door();
+        System.out.println(door);
+        door.signal();
+        door.signal();
+
+
     }
 }
