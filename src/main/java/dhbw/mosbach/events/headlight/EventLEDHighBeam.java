@@ -1,4 +1,4 @@
-package dhbw.mosbach.events.headlights;
+package dhbw.mosbach.events.headlight;
 
 public class EventLEDHighBeam {
     public EventLEDHighBeam() {
