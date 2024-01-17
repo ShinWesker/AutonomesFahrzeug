@@ -1,6 +1,5 @@
 package dhbw.mosbach.parts.brake;
 
-import com.google.common.eventbus.Subscribe;
 import dhbw.mosbach.events.brake.EventBrakeSet;
 
 public class Brake extends ABrake {

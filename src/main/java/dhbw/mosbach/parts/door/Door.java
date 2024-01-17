@@ -5,7 +5,7 @@ public class Door {
     private boolean isOpened;
 
     public Door() {
-        this.doorState = new ClosedState(); // Initial state
+        this.doorState = new ClosedState();
         this.isOpened = false;
     }
 
