@@ -1,11 +1,16 @@
 package dhbw.mosbach.parts.electricalengine;
 
+import dhbw.mosbach.events.battery.EventBatteryTakeEnergy;
 import dhbw.mosbach.events.electricalengine.EventDecreaseRPM;
 import dhbw.mosbach.events.electricalengine.EventEngineOff;
 import dhbw.mosbach.events.electricalengine.EventEngineOn;
 import dhbw.mosbach.events.electricalengine.EventIncreaseRPM;
 
 public class EngineNG extends AEngine {
+    public EngineNG() {
+        super();
+        this.energyUsageFactor = 3;
+    }
     @Override
     public void receive(EventEngineOn eventEngineOn) {
         isOn = true;
@@ -19,27 +24,7 @@ public class EngineNG extends AEngine {
 
     }
 
-    @Override
-    public void receive(EventIncreaseRPM eventIncreaseRPM) {
-        RPM = eventIncreaseRPM.getDeltaRPM();
-        seconds = eventIncreaseRPM.getSeconds();
-        System.out.printf("""
-                Engine RPM increased to:
-                RPM: %.2f
-                seconds: %.2f
-                """, RPM, seconds);
-    }
 
-    @Override
-    public void receive(EventDecreaseRPM eventDecreaseRPM) {
-        RPM = eventDecreaseRPM.getDeltaRPM();
-        seconds = eventDecreaseRPM.getSeconds();
-        System.out.printf("""
-                Engine RPM decreased to:
-                RPM: %.2f
-                seconds: %.2f
-                """, RPM, seconds);
 
-    }
-    // TODO verhalten: verbraucht 3 Energieeinheiten/RPM je Iteration
+
 }

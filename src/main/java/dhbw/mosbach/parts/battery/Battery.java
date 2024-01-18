@@ -1,6 +1,12 @@
 package dhbw.mosbach.parts.battery;
 
-public class Battery {
+import com.google.common.eventbus.Subscribe;
+import dhbw.mosbach.Subscriber;
+import dhbw.mosbach.events.battery.EventBatteryTakeEnergy;
+
+import java.util.concurrent.Flow;
+
+public class Battery extends Subscriber {
     private final ACell[] cells;
     private int temperature;
 
@@ -30,20 +36,22 @@ public class Battery {
 
     }
 
-    public boolean takeEnergy(int amount){
-        setTemperature(temperature - 5);
-        if (amount < 0)  return true;
+    @Subscribe
+    public void takeEnergy(EventBatteryTakeEnergy eventBatteryTakeEnergy) throws BatteryEmptyException {
+        int amount = eventBatteryTakeEnergy.getAmount();
+        if (amount< 0)  return;
         for (ACell subordinate : cells) {
-            if (amount == 0) return true;
+            if (amount == 0) return;
             amount = subordinate.discharge(amount);
+            setTemperature(temperature - 5);
         }
-        return amount == 0;
+        if (amount != 0) throw new BatteryEmptyException();
     }
 
     public void charge(){
-        setTemperature(temperature + 5);
         for (ACell subordinate : cells) {
             subordinate.charge();
+            setTemperature(temperature + 5);
         }
     }
 

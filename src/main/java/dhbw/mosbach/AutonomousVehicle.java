@@ -85,7 +85,7 @@ public class AutonomousVehicle implements IDoorListener {
         this.rightDoorSensor = new DoorSensor(DoorSide.RIGHT);
         rightDoorSensor.addListener(this);
         battery.getBatteryTemperatureSensor().addListener(centralUnit);
-
+        battery.charge();
 
         // security relevant sensors are hard coded
         ultraSonicSensors = new UltraSonicSensor[8];
@@ -96,6 +96,7 @@ public class AutonomousVehicle implements IDoorListener {
 
         emergencyButton = new EmergencyButton();
 
+        engine.addSubscriber(battery);
 
     }
 

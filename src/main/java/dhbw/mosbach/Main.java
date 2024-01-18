@@ -11,6 +11,7 @@ import dhbw.mosbach.command.Key;
 import dhbw.mosbach.command.ShutdownCommand;
 import dhbw.mosbach.command.StartupCommand;
 import dhbw.mosbach.parts.battery.Battery;
+import dhbw.mosbach.parts.battery.BatteryEmptyException;
 import dhbw.mosbach.parts.brake.Brake;
 import dhbw.mosbach.parts.brakelight.BrakeLight;
 import dhbw.mosbach.parts.camera.CameraV1;
@@ -28,7 +29,7 @@ import dhbw.mosbach.parts.wheel.Wheel;
 public class Main {
     public static void main(String[] args) {
 
-        AutonomousVehicleConfig autonomousVehicleConfig =  new AutonomousVehicleConfig();
+        AutonomousVehicleConfig autonomousVehicleConfig = new AutonomousVehicleConfig();
         if (args.length > 0 && "-config".equals(args[0])) {
             // Code to start the configuration CLI
             new VehicleConfigCLI(autonomousVehicleConfig);
@@ -54,53 +55,63 @@ public class Main {
                 .build();
 
         vehicle.startup();
-        vehicle.move(200, 20);
-        vehicle.leftTurn(300, 4);
-        vehicle.rightTurn(100, 3);
-        vehicle.stop();
-        vehicle.emergencyStop();
-        vehicle.shutdown();
+        /*  vehicle.move(200, 20);
+          vehicle.leftTurn(300, 4);
+          vehicle.rightTurn(100, 3);
+          vehicle.stop();
+          vehicle.emergencyStop();
+          vehicle.shutdown();
 
 
-        // Adapter - Pattern
-        IConnectorPlug twoPin = new TwoPolConnector();
-        IConnectorPlug fourPin = new FourPolAdapter();
+          // Adapter - Pattern
+          IConnectorPlug twoPin = new TwoPolConnector();
+          IConnectorPlug fourPin = new FourPolAdapter();
 
-        ChargingStation chargingStation = new ChargingStation();
-        chargingStation.connect(twoPin);
-        chargingStation.connect(fourPin);
+          ChargingStation chargingStation = new ChargingStation();
+          chargingStation.connect(twoPin);
+          chargingStation.connect(fourPin);
 
-        // Composite - Pattern
-        // Observer - Pattern
-        Battery battery = new Battery();
-        boolean status = battery.takeEnergy(1);
-        System.out.println(status);
+          // Composite - Pattern
+          // Observer - Pattern
+          Battery battery = new Battery();
 
-        battery.getBatteryTemperatureSensor().addListener(new CentralUnit());
+          try {
+              battery.takeEnergy(1);
+          } catch (BatteryEmptyException e) {
+              System.out.println(e.getMessage());
+          }
 
-        battery.charge();
-        status = battery.takeEnergy(1);
-        System.out.println(status);
+          battery.getBatteryTemperatureSensor().addListener(new CentralUnit());
 
-        // key starting car
-        Key key = new Key();
-        ICommand cmd = new StartupCommand(key);
-        key.setCommand(cmd);
-        key.execute();
+          battery.charge();
+          try {
+              battery.takeEnergy(1);
+          } catch (BatteryEmptyException e) {
+              System.out.println(e.getMessage());
+          }
 
-
-        // opening and closing the door
-        vehicle.getLeftDoorSensor().action();
-        vehicle.getRightDoorSensor().action();
-
-        vehicle.getLeftDoorSensor().action();
+          // key starting car
+          Key key = new Key();
+          ICommand cmd = new StartupCommand(key);
+          key.setCommand(cmd);
+          key.execute();
 
 
-        // detect near object Observer Pattern
-        System.out.println();
-        vehicle.getUltraSonicSensors()[5].action(5);
+          // opening and closing the door
+          vehicle.getLeftDoorSensor().action();
+          vehicle.getRightDoorSensor().action();
 
-        // test emergency button
-        vehicle.getEmergencyButton().press();
+          vehicle.getLeftDoorSensor().action();
+
+
+          // detect near object Observer Pattern
+          System.out.println();
+          vehicle.getUltraSonicSensors()[5].action(5);
+
+          // test emergency button
+          vehicle.getEmergencyButton().press();
+          */
+
+        vehicle.move(100, 1);
     }
 }

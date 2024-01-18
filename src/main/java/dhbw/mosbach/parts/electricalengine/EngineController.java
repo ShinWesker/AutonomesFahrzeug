@@ -29,5 +29,9 @@ public class EngineController extends Subscriber {
     public  void receive(EventDecreaseRPM eventDecreaseRPM){
         engine.receive(eventDecreaseRPM);
     }
+
+    public void addSubscriber(Subscriber subscriber){
+        this.engine.addSubscriber(subscriber);
+    }
 }
 
