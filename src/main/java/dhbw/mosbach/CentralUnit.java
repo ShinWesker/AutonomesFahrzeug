@@ -178,4 +178,8 @@ public class CentralUnit implements IBatteryTemperatureListener, IUltraSonicList
     public void reportObstacle(int minimalDistance) {
         System.out.println("Minimal distance to obstacle: " + minimalDistance);
     }
+
+    public EventBus getEventBus() {
+        return eventBus;
+    }
 }

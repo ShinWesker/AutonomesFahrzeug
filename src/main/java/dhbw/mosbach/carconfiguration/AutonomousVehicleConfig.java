@@ -73,7 +73,7 @@ public class AutonomousVehicleConfig {
         save();
     }
 
-    private void save(){
+    public void save(){
         mementoCaretaker.setMemento(new AutonomousVehicleConfigMemento(rejectDrunkenPassenger,stopByPoliceRequest,allowDriveByNight,behaviorWithNaggingPassengers,musicDuringDrive));
     }
 

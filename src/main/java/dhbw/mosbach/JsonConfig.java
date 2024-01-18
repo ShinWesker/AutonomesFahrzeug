@@ -24,7 +24,6 @@ public enum JsonConfig {
             JSONTokener jsonTokener = new JSONTokener(fileReader);
             JSONObject jsonObject = new JSONObject(jsonTokener);
             fileReader.close();
-
             switch (jsonObject.getString("lidar_type")) {
                 case "NG" -> {
                     return new LidarNG();
@@ -32,14 +31,10 @@ public enum JsonConfig {
                 case "XT" -> {
                     return new LidarXT();
                 }
-
             }
-
-
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-
         return new LidarNG();
     }
 

@@ -4,7 +4,7 @@ public class OpenState implements IDoorState {
     @Override
     public void signal(Door door) {
         System.out.println("Closing the door!");
-        door.setState(new OpenState());
+        door.setState(new ClosedState());
     }
 
     public String toString(){

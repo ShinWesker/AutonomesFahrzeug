@@ -14,6 +14,8 @@ public abstract class ACell {
     }
 
     public int discharge(int amount){
+        if (subordinates == null) return amount;
+
         for (ACell subordinate : subordinates) {
             if (amount == 0) return 0;
             amount = subordinate.discharge(amount);
