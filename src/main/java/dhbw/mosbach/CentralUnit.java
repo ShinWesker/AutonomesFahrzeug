@@ -23,10 +23,12 @@ import dhbw.mosbach.events.headlight.EventLEDOn;
 import dhbw.mosbach.events.lidar.EventLidarOff;
 import dhbw.mosbach.events.lidar.EventLidarOn;
 import dhbw.mosbach.events.turnsignal.*;
+import dhbw.mosbach.parts.battery.IBatteryTemperatureListener;
+import dhbw.mosbach.parts.ultrasonicsensor.IUltraSonicListener;
 
 import java.util.Objects;
 
-public class CentralUnit {
+public class CentralUnit implements IBatteryTemperatureListener, IUltraSonicListener {
     EventBus eventBus;
 
     private IAlgorithm crypt = new AES(Configuration.INSTANCE.salt);
@@ -165,5 +167,15 @@ public class CentralUnit {
 
     public void lidarOff() {
         eventBus.post(new EventLidarOff());
+    }
+
+    @Override
+    public void reportChange() {
+        System.out.println("Battery temperature has changed!");
+    }
+
+    @Override
+    public void reportObstacle(int minimalDistance) {
+        System.out.println("Minimal distance to obstacle: " + minimalDistance);
     }
 }

@@ -16,6 +16,7 @@ import dhbw.mosbach.parts.gps.AGPS;
 import dhbw.mosbach.parts.headlight.AHeadLight;
 import dhbw.mosbach.parts.lidar.ALidar;
 import dhbw.mosbach.parts.seatbench.SeatBench;
+import dhbw.mosbach.parts.ultrasonicsensor.UltraSonicSensor;
 import dhbw.mosbach.parts.wheel.IWheel;
 
 public class AutonomousVehicle implements IDoorListener {
@@ -37,12 +38,18 @@ public class AutonomousVehicle implements IDoorListener {
     private DoorSensor leftDoorSensor;
     private DoorSensor rightDoorSensor;
 
+    private UltraSonicSensor[] ultraSonicSensors;
+
     public DoorSensor getLeftDoorSensor() {
         return leftDoorSensor;
     }
 
     public DoorSensor getRightDoorSensor() {
         return rightDoorSensor;
+    }
+
+    public UltraSonicSensor[] getUltraSonicSensors() {
+        return ultraSonicSensors;
     }
 
     private AutonomousVehicle(Builder builder) {
@@ -64,6 +71,14 @@ public class AutonomousVehicle implements IDoorListener {
         leftDoorSensor.addListener(this);
         this.rightDoorSensor = new DoorSensor(DoorSide.RIGHT);
         rightDoorSensor.addListener(this);
+        battery.getBatteryTemperatureSensor().addListener(centralUnit);
+
+        // security relevant sensors are hard coded
+        ultraSonicSensors = new UltraSonicSensor[8];
+        for (int i = 0; i < ultraSonicSensors.length; i++) {
+            ultraSonicSensors[i] = new UltraSonicSensor(i);
+            ultraSonicSensors[i].addListener(centralUnit);
+        }
     }
 
     public void startup() {

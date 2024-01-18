@@ -1,7 +1,15 @@
 package dhbw.mosbach.parts.battery;
 
 public class Battery {
-    private ACell[] cells;
+    private final ACell[] cells;
+    private int temperature;
+
+    private final BatteryTemperatureSensor batteryTemperatureSensor;
+
+    public BatteryTemperatureSensor getBatteryTemperatureSensor() {
+        return batteryTemperatureSensor;
+    }
+
     public Battery(){
         cells = new MainCell[500];
 
@@ -18,9 +26,12 @@ public class Battery {
                 cells[i].addUnit(subCell);
             }
         }
+        this.batteryTemperatureSensor = new BatteryTemperatureSensor();
+
     }
 
     public boolean takeEnergy(int amount){
+        setTemperature(temperature - 5);
         if (amount < 0)  return true;
         for (ACell subordinate : cells) {
             if (amount == 0) return true;
@@ -30,10 +41,14 @@ public class Battery {
     }
 
     public void charge(){
+        setTemperature(temperature + 5);
         for (ACell subordinate : cells) {
             subordinate.charge();
         }
     }
 
-
+    private void setTemperature(int temperature) {
+        batteryTemperatureSensor.action();
+        this.temperature = temperature;
+    }
 }

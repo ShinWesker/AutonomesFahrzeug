@@ -60,11 +60,14 @@ public class Main {
         chargingStation.connect(fourPin);
 
         // Composite - Pattern
+        // Observer - Pattern
         Battery battery = new Battery();
         boolean status = battery.takeEnergy(1);
         System.out.println(status);
-        battery.charge();
 
+        battery.getBatteryTemperatureSensor().addListener(new CentralUnit());
+
+        battery.charge();
         status = battery.takeEnergy(1);
         System.out.println(status);
 
@@ -80,5 +83,10 @@ public class Main {
         vehicle.getRightDoorSensor().action();
 
         vehicle.getLeftDoorSensor().action();
+
+
+        // detect near object Observer Pattern
+        System.out.println();
+        vehicle.getUltraSonicSensors()[5].action(5);
     }
 }
