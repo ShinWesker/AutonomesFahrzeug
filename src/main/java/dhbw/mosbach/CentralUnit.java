@@ -1,6 +1,9 @@
 package dhbw.mosbach;
 
 import com.google.common.eventbus.EventBus;
+import dhbw.mosbach.cryptography.IAlgorithm;
+import dhbw.mosbach.cryptography.aes.AES;
+import dhbw.mosbach.cryptography.aes.Configuration;
 import dhbw.mosbach.events.brake.EventBrakeLightOff;
 import dhbw.mosbach.events.brake.EventBrakeLightOn;
 import dhbw.mosbach.events.brake.EventBrakeSet;
@@ -21,33 +24,70 @@ import dhbw.mosbach.events.lidar.EventLidarOff;
 import dhbw.mosbach.events.lidar.EventLidarOn;
 import dhbw.mosbach.events.turnsignal.*;
 
+import java.util.Objects;
+
 public class CentralUnit {
     EventBus eventBus;
+
+    private IAlgorithm crypt = new AES(Configuration.INSTANCE.salt);
+
+    private AutonomousVehicle vehicle;
+
+    private String key = "ZooxSDC73";
+
+    public void activate(String key){
+        if (checkPassword(key)) {
+            System.out.println("Starting with Key");
+            vehicle.startup();
+        } else {
+            System.out.println("Error wrong Key");
+        }
+
+    }
+
+    public void deactivate(String key){
+        if (checkPassword(key)) {
+            System.out.println("Stopping with Key");
+            vehicle.stop();
+        } else {
+            System.out.println("Error wrong Key");
+        }
+
+    }
+
+    private boolean checkPassword(String key) {
+        return Objects.equals(this.key, crypt.decrypt(key, Configuration.INSTANCE.secretKey));
+    }
+
+    public void setVehicle(AutonomousVehicle vehicle) {
+        this.vehicle = vehicle;
+    }
+
     public CentralUnit() {
         this.eventBus = new EventBus();
     }
 
-    public void addSubscriber(Subscriber subscriber){
+    public void addSubscriber(Subscriber subscriber) {
         eventBus.register(subscriber);
     }
 
-    public void brakeLightsOn(){
+    public void brakeLightsOn() {
         eventBus.post(new EventBrakeLightOn());
     }
 
-    public void brakeLightsOff(){
+    public void brakeLightsOff() {
         eventBus.post(new EventBrakeLightOff());
     }
 
-    public void brakeSet(double percentage){
+    public void brakeSet(double percentage) {
         eventBus.post(new EventBrakeSet(percentage));
     }
 
-    public void cameraOn(){
+    public void cameraOn() {
         eventBus.post(new EventCameraOn());
     }
 
-    public void cameraOff(){
+    public void cameraOff() {
         eventBus.post(new EventCameraOff());
     }
 
@@ -60,11 +100,11 @@ public class CentralUnit {
     }
 
     public void engineIncreaseRPM(double deltaRPM, double seconds) {
-        eventBus.post(new EventIncreaseRPM(deltaRPM,seconds));
+        eventBus.post(new EventIncreaseRPM(deltaRPM, seconds));
     }
 
     public void engineDecreaseRPM(double deltaRPM, double seconds) {
-        eventBus.post(new EventDecreaseRPM(deltaRPM,seconds));
+        eventBus.post(new EventDecreaseRPM(deltaRPM, seconds));
     }
 
     public void ledOn() {
@@ -99,17 +139,18 @@ public class CentralUnit {
         eventBus.post(new EventRightIndicatorOff());
     }
 
-    public void turnSignalHazardWarningOn(){
+    public void turnSignalHazardWarningOn() {
         eventBus.post(new EventHazardWarningOn());
     }
 
-    public void turnSignalHazardWarningOff(){
+    public void turnSignalHazardWarningOff() {
         eventBus.post(new EventHazardWarningOff());
     }
 
     public void gpsOn() {
         eventBus.post(new EventGPSOn());
     }
+
     public void gpsOff() {
         eventBus.post(new EventGPSOff());
     }

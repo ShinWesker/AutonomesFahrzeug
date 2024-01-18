@@ -1,13 +1,16 @@
 package dhbw.mosbach;
 
-import dhbw.mosbach.events.battery.EventBattery;
+import dhbw.mosbach.command.DoorChangeStateCommand;
+import dhbw.mosbach.command.ICommand;
 import dhbw.mosbach.parts.battery.Battery;
 import dhbw.mosbach.parts.brake.ABrake;
 import dhbw.mosbach.parts.brakelight.ABrakeLight;
+import dhbw.mosbach.parts.doorsensor.DoorSensor;
+import dhbw.mosbach.parts.doorsensor.IDoorListener;
 import dhbw.mosbach.parts.camera.ICamera;
 import dhbw.mosbach.parts.chassis.IChassis;
 import dhbw.mosbach.parts.door.Door;
-import dhbw.mosbach.parts.electricalengine.AEngine;
+import dhbw.mosbach.parts.door.DoorSide;
 import dhbw.mosbach.parts.electricalengine.EngineController;
 import dhbw.mosbach.parts.gps.AGPS;
 import dhbw.mosbach.parts.headlight.AHeadLight;
@@ -15,7 +18,7 @@ import dhbw.mosbach.parts.lidar.ALidar;
 import dhbw.mosbach.parts.seatbench.SeatBench;
 import dhbw.mosbach.parts.wheel.IWheel;
 
-public class AutonomousVehicle {
+public class AutonomousVehicle implements IDoorListener {
 
     private IChassis chassis;
     private EngineController engine;
@@ -31,6 +34,17 @@ public class AutonomousVehicle {
     private ALidar[] lidars;
     private CentralUnit centralUnit;
 
+    private DoorSensor leftDoorSensor;
+    private DoorSensor rightDoorSensor;
+
+    public DoorSensor getLeftDoorSensor() {
+        return leftDoorSensor;
+    }
+
+    public DoorSensor getRightDoorSensor() {
+        return rightDoorSensor;
+    }
+
     private AutonomousVehicle(Builder builder) {
         this.centralUnit = builder.centralUnit;
         this.chassis = builder.chassis;
@@ -45,9 +59,14 @@ public class AutonomousVehicle {
         this.gps = builder.gps;
         this.cameras = builder.cameras;
         this.lidars = builder.lidars;
+        this.centralUnit.setVehicle(this);
+        this.leftDoorSensor = new DoorSensor(DoorSide.LEFT);
+        leftDoorSensor.addListener(this);
+        this.rightDoorSensor = new DoorSensor(DoorSide.RIGHT);
+        rightDoorSensor.addListener(this);
     }
 
-    public void startup(){
+    public void startup() {
         System.out.println("Start: ");
         centralUnit.engineOn();
         centralUnit.ledOn();
@@ -58,38 +77,38 @@ public class AutonomousVehicle {
         System.out.println();
     }
 
-    public void move(double deltaRPM, double seconds){
+    public void move(double deltaRPM, double seconds) {
         System.out.println("Move: ");
         centralUnit.turnSignalLeftOff();
         centralUnit.turnSignalRightOff();
         centralUnit.ledDimmed();
-        centralUnit.engineIncreaseRPM(deltaRPM,seconds);
+        centralUnit.engineIncreaseRPM(deltaRPM, seconds);
         centralUnit.brakeSet(0);
         centralUnit.brakeLightsOff();
         System.out.println();
     }
 
-    public void leftTurn(double deltaRPM, double seconds){
+    public void leftTurn(double deltaRPM, double seconds) {
         System.out.println("Turn left: ");
         centralUnit.turnSignalLeftOn();
-        centralUnit.engineDecreaseRPM(deltaRPM,seconds);
+        centralUnit.engineDecreaseRPM(deltaRPM, seconds);
         centralUnit.brakeSet(70);
         centralUnit.brakeLightsOn();
         System.out.println();
 
     }
 
-    public void rightTurn(double deltaRPM, double seconds){
+    public void rightTurn(double deltaRPM, double seconds) {
         System.out.println("Turn right: ");
         centralUnit.turnSignalRightOn();
-        centralUnit.engineDecreaseRPM(deltaRPM,seconds);
+        centralUnit.engineDecreaseRPM(deltaRPM, seconds);
         centralUnit.brakeSet(70);
         centralUnit.brakeLightsOn();
         System.out.println();
 
     }
 
-    public void stop(){
+    public void stop() {
         System.out.println("Stop: ");
         centralUnit.brakeSet(100);
         centralUnit.brakeLightsOn();
@@ -97,7 +116,7 @@ public class AutonomousVehicle {
 
     }
 
-    public void emergencyStop(){
+    public void emergencyStop() {
         System.out.println("Emergency stop: ");
         centralUnit.brakeSet(100);
         centralUnit.brakeLightsOn();
@@ -109,7 +128,7 @@ public class AutonomousVehicle {
         System.out.println();
     }
 
-    public void shutdown(){
+    public void shutdown() {
         System.out.println("Shutdown: ");
         centralUnit.brakeSet(100);
         centralUnit.engineOff();
@@ -120,6 +139,22 @@ public class AutonomousVehicle {
         centralUnit.cameraOff();
         centralUnit.lidarOff();
         System.out.println();
+    }
+
+    @Override
+    public void openDoor(DoorSide doorSide) {
+        if (doorSide == DoorSide.LEFT) {
+            executeCommandOnDoors(0, 1);
+        } else if (doorSide == DoorSide.RIGHT) {
+            executeCommandOnDoors(2, 3);
+        }
+    }
+
+    private void executeCommandOnDoors(int firstDoorIndex, int secondDoorIndex) {
+        ICommand cmd = new DoorChangeStateCommand(doors[firstDoorIndex]);
+        cmd.execute();
+        cmd = new DoorChangeStateCommand(doors[secondDoorIndex]);
+        cmd.execute();
     }
 
 
@@ -215,11 +250,13 @@ public class AutonomousVehicle {
         }
 
         public AutonomousVehicle build() {
+            ReceiverModule.INSTANCE.setCentralUnit(this.centralUnit);
             return new AutonomousVehicle(this);
         }
 
         private <T> void subscribe(T subscriber) {
             centralUnit.addSubscriber((Subscriber) subscriber);
         }
+
     }
 }

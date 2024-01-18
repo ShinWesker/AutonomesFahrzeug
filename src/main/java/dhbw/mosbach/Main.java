@@ -4,12 +4,17 @@ import dhbw.mosbach.adapter.ChargingStation;
 import dhbw.mosbach.adapter.FourPolAdapter;
 import dhbw.mosbach.adapter.IConnectorPlug;
 import dhbw.mosbach.adapter.TwoPolConnector;
+import dhbw.mosbach.command.ICommand;
+import dhbw.mosbach.command.Key;
+import dhbw.mosbach.command.ShutdownCommand;
+import dhbw.mosbach.command.StartupCommand;
 import dhbw.mosbach.parts.battery.Battery;
 import dhbw.mosbach.parts.brake.Brake;
 import dhbw.mosbach.parts.brakelight.BrakeLight;
 import dhbw.mosbach.parts.camera.CameraV1;
 import dhbw.mosbach.parts.chassis.Chassis;
 import dhbw.mosbach.parts.door.Door;
+import dhbw.mosbach.parts.electricalengine.EngineConfig;
 import dhbw.mosbach.parts.electricalengine.EngineController;
 import dhbw.mosbach.parts.electricalengine.EngineX;
 import dhbw.mosbach.parts.gps.GPS;
@@ -24,7 +29,7 @@ public class Main {
 
         AutonomousVehicle vehicle = new AutonomousVehicle.Builder()
                 .setChassis(new Chassis())
-                .setEngine(new EngineController(new EngineX()))
+                .setEngine(new EngineController(EngineConfig.INSTANCE.getEngineType()))
                 .setBattery(new Battery())
                 .setHeadLights(new HeadLight[]{new HeadLight(), new HeadLight(), new HeadLight(), new HeadLight()})
                 .setBrakeLight(new BrakeLight[]{new BrakeLight(), new BrakeLight(), new BrakeLight(), new BrakeLight()})
@@ -63,6 +68,17 @@ public class Main {
         status = battery.takeEnergy(1);
         System.out.println(status);
 
+        // key starting car
+        Key key = new Key();
+        ICommand cmd = new StartupCommand(key);
+        key.setCommand(cmd);
+        key.execute();
 
+
+        // opening and closing the door
+        vehicle.getLeftDoorSensor().action();
+        vehicle.getRightDoorSensor().action();
+
+        vehicle.getLeftDoorSensor().action();
     }
 }
