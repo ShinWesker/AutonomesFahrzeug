@@ -4,6 +4,8 @@ import dhbw.mosbach.adapter.ChargingStation;
 import dhbw.mosbach.adapter.FourPolAdapter;
 import dhbw.mosbach.adapter.IConnectorPlug;
 import dhbw.mosbach.adapter.TwoPolConnector;
+import dhbw.mosbach.carconfiguration.AutonomousVehicleConfig;
+import dhbw.mosbach.carconfiguration.VehicleConfigCLI;
 import dhbw.mosbach.command.ICommand;
 import dhbw.mosbach.command.Key;
 import dhbw.mosbach.command.ShutdownCommand;
@@ -25,6 +27,14 @@ import dhbw.mosbach.parts.wheel.Wheel;
 
 public class Main {
     public static void main(String[] args) {
+
+        AutonomousVehicleConfig autonomousVehicleConfig =  new AutonomousVehicleConfig();
+        if (args.length > 0 && "-config".equals(args[0])) {
+            // Code to start the configuration CLI
+            new VehicleConfigCLI(autonomousVehicleConfig);
+        }
+
+
         System.out.println("## Project Autonomous Vehicle ##");
 
         AutonomousVehicle vehicle = new AutonomousVehicle.Builder()
@@ -40,10 +50,11 @@ public class Main {
                 .setGps(new GPS[]{new GPS(), new GPS()})
                 .setCameras(new CameraV1[]{new CameraV1(), new CameraV1(), new CameraV1(), new CameraV1()})
                 .setLidars(new LidarNG[]{new LidarNG(), new LidarNG(), new LidarNG(), new LidarNG()})
+                .setAutonomousVehicleConfig(autonomousVehicleConfig)
                 .build();
 
         vehicle.startup();
-        vehicle.move(200,20);
+        vehicle.move(200, 20);
         vehicle.leftTurn(300, 4);
         vehicle.rightTurn(100, 3);
         vehicle.stop();
@@ -88,5 +99,8 @@ public class Main {
         // detect near object Observer Pattern
         System.out.println();
         vehicle.getUltraSonicSensors()[5].action(5);
+
+        // test emergency button
+        vehicle.getEmergencyButton().press();
     }
 }

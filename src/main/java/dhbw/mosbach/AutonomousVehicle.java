@@ -1,5 +1,6 @@
 package dhbw.mosbach;
 
+import dhbw.mosbach.carconfiguration.AutonomousVehicleConfig;
 import dhbw.mosbach.command.DoorChangeStateCommand;
 import dhbw.mosbach.command.ICommand;
 import dhbw.mosbach.parts.battery.Battery;
@@ -12,6 +13,7 @@ import dhbw.mosbach.parts.chassis.IChassis;
 import dhbw.mosbach.parts.door.Door;
 import dhbw.mosbach.parts.door.DoorSide;
 import dhbw.mosbach.parts.electricalengine.EngineController;
+import dhbw.mosbach.parts.emergencybutton.EmergencyButton;
 import dhbw.mosbach.parts.gps.AGPS;
 import dhbw.mosbach.parts.headlight.AHeadLight;
 import dhbw.mosbach.parts.lidar.ALidar;
@@ -40,6 +42,10 @@ public class AutonomousVehicle implements IDoorListener {
 
     private UltraSonicSensor[] ultraSonicSensors;
 
+    private AutonomousVehicleConfig autonomousVehicleConfig;
+
+    private EmergencyButton emergencyButton;
+
     public DoorSensor getLeftDoorSensor() {
         return leftDoorSensor;
     }
@@ -50,6 +56,10 @@ public class AutonomousVehicle implements IDoorListener {
 
     public UltraSonicSensor[] getUltraSonicSensors() {
         return ultraSonicSensors;
+    }
+
+    public EmergencyButton getEmergencyButton() {
+        return emergencyButton;
     }
 
     private AutonomousVehicle(Builder builder) {
@@ -66,12 +76,16 @@ public class AutonomousVehicle implements IDoorListener {
         this.gps = builder.gps;
         this.cameras = builder.cameras;
         this.lidars = builder.lidars;
+        this.autonomousVehicleConfig = builder.autonomousVehicleConfig;
+
         this.centralUnit.setVehicle(this);
+
         this.leftDoorSensor = new DoorSensor(DoorSide.LEFT);
         leftDoorSensor.addListener(this);
         this.rightDoorSensor = new DoorSensor(DoorSide.RIGHT);
         rightDoorSensor.addListener(this);
         battery.getBatteryTemperatureSensor().addListener(centralUnit);
+
 
         // security relevant sensors are hard coded
         ultraSonicSensors = new UltraSonicSensor[8];
@@ -79,6 +93,10 @@ public class AutonomousVehicle implements IDoorListener {
             ultraSonicSensors[i] = new UltraSonicSensor(i);
             ultraSonicSensors[i].addListener(centralUnit);
         }
+
+        emergencyButton = new EmergencyButton();
+
+
     }
 
     public void startup() {
@@ -188,6 +206,8 @@ public class AutonomousVehicle implements IDoorListener {
         private ICamera[] cameras;
         private ALidar[] lidars;
 
+        private AutonomousVehicleConfig autonomousVehicleConfig;
+
         public Builder setChassis(IChassis chassis) {
             this.chassis = chassis;
             return this;
@@ -263,11 +283,17 @@ public class AutonomousVehicle implements IDoorListener {
             }
             return this;
         }
+        public Builder setAutonomousVehicleConfig(AutonomousVehicleConfig config){
+            this.autonomousVehicleConfig = config;
+            return this;
+        }
 
         public AutonomousVehicle build() {
             ReceiverModule.INSTANCE.setCentralUnit(this.centralUnit);
             return new AutonomousVehicle(this);
         }
+
+
 
         private <T> void subscribe(T subscriber) {
             centralUnit.addSubscriber((Subscriber) subscriber);
